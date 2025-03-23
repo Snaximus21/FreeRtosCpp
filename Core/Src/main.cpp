@@ -78,16 +78,27 @@ void rgAssertMsgCalled(unsigned long ulLine, char const*const pcFileName, char c
 #include "RgTimer.hpp"
 #include "KernelCore.hpp"
 
+void mainTaskFunction();
+
+RgEmbeddedOs::RgTask mainTask {"MainTaskName", 256, osPriorityNormal};
+RgEmbeddedOs::RgTimer timer {"Main50MsTimer", 1000, true};
+RgEmbeddedOs::KernelCore core {};
+
 void mainTaskFunction()
 {
+	static uint32_t counter = 0;
+	static bool state = 0;
+
 	BSP_LED_Toggle(LED_GREEN);
 	BSP_LED_Toggle(LED_YELLOW);
 	BSP_LED_Toggle(LED_RED);
+	;
+	if(counter++ % 10 == 0)
+	{
+		timer.setPeriod(state ? 50 : 500);
+		state = !state;
+	}
 }
-
-RgEmbeddedOs::RgTask mainTask {"MainTaskName", 256, osPriorityNormal};
-RgEmbeddedOs::RgTimer timer {"Main50MsTimer", 50, true, mainTaskFunction};
-RgEmbeddedOs::KernelCore core {};
 
 /* USER CODE END 0 */
 
@@ -149,9 +160,9 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
 
-  mainTask.threadBody = mainTaskFunction;
-  mainTask.initTask();
-  mainTask.start();
+  //timer. = mainTaskFunction;
+  //mainTask.initTask();
+  //mainTask.start();
   /* USER CODE END RTOS_THREADS */
 
   /* Initialize leds */
@@ -174,6 +185,8 @@ int main(void)
 
   /* Start scheduler */
   //osKernelStart();
+  timer.setCallback(mainTaskFunction);
+  timer.start();
   core.start();
 
 

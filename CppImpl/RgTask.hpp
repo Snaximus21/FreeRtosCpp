@@ -51,10 +51,12 @@ namespace RgEmbeddedOs
 		const uint32_t UNIQUE_WORD = UNIQUE_WORD_VALUE;
 		std::function<void()> threadBody;
 
+#if INCLUDE_uxTaskGetStackHighWaterMark == 1
 		// Возвращает процентное соотношение использованного стека
 		uint8_t getStackUsage() const {
 			return _stackUsage;
 		}
+#endif
 
 		void onRun() {
 			while (true) {
@@ -137,6 +139,13 @@ namespace RgEmbeddedOs
 		{
 			RG_ASSERT_MSG(priority <= NativeConsts::MAX_TASK_PRIORITY, "Invalid task priority value.");
 			RG_ASSERT_MSG(stackSize >= NativeConsts::MIN_TASK_STACK_SIZE, "Invalid task stack size.");
+		}
+
+		~RgTask() {
+			if (_taskHandle) {
+				stop();
+				deleteTask();
+			}
 		}
 	};
 }
