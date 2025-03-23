@@ -1,0 +1,7 @@
+# Указываем, что файлы с расширением cpp, hpp, c, h будут обрабатываться как текстовые
+# и использовать нужно кодировку CP1251 
+*.cpp text working-tree-encoding=CP1251
+*.hpp text working-tree-encoding=CP1251
+*.c text working-tree-encoding=CP1251
+*.h text working-tree-encoding=CP1251
+*.gitattributes working-tree-encoding=CP1251
